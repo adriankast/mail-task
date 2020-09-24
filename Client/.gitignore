@@ -1,3 +1,7 @@
+# auth
+auth.js
+auth.json
+
 .DS_Store
 node_modules
 /dist
