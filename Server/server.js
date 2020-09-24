@@ -4,6 +4,7 @@ const config = require("./config.js")
 const mailClient = require("node-mail-client")
 const credentials = require("./auth.js")
 const imaps = require("imap-simple")
+const MailParser = require("mailparser").MailParser
 const Imap = require("node-imap"),
     inspect = require("util").inspect
 
@@ -33,32 +34,16 @@ imap.once("end", function() {
     console.log("Imap Connection ended")
 })
 
-// imap.connect()
-
-
-// these methods all returned promise
-// checkAuth will auto invoke and it will check smtp auth
 
 const mail = new mailClient(smtp)
-// pass checkAuth check
-// mail.check=1  // 0: init  1:pass  2:fail
-/* // receive
-mail.receive("1:10").then(result=>{
-    // do something
-    console.log(result.toString())
-}).catch(err=>{
-    console.log(err)
-}) */
-
-// send
-// mail.send({ to:"adriankast@hotmail.de", subject:"Test", text:"asdf", html:"html" }).then(info=>{console.log(info)})
-//    .catch(console.error)
 
 
 // send or receive
 
 
-// Server setup
+/**
+ * Server setup
+ */
 const server = express()
 
 server.use(express.json())
@@ -80,32 +65,58 @@ server.get("/mails", function (req, res) {
     const myMails = []
     imap.once("ready", function() {
         openInbox(function(err, box) {
+            const texts = []
             if (err) throw err
-            const f = imap.seq.fetch("1:3", {
-                bodies: "HEADER.FIELDS (FROM TO SUBJECT DATE)",
+            const f = imap.seq.fetch("1:10", {
+                bodies: ["HEADER.FIELDS (FROM TO SUBJECT DATE)", "TEXT"],
                 struct: true
             })
+            const parser = new MailParser()
+
             f.on("message", function(msg, seqno) {
+                parser.on("headers", function(headers) {
+                    console.log("Header: " + JSON.stringify(headers))
+                })
+                parser.on("data", data => {
+                    if (data.type === "text") {
+                        console.log("my " + seqno)
+                        console.log(data.text)
+                        texts.push(data.text)
+                        console.log("end text")
+                    }
+                })
+
+                // msg.on("body", function(stream) {
+                //     stream.on("data", function(chunk) {
+                //         parser.write(chunk.toString("utf8"));
+                //     });
+                // });
+
                 console.log("Message #%d", seqno)
                 const prefix = "(#" + seqno + ") "
                 msg.on("body", function(stream, info) {
                     let buffer = ""
                     stream.on("data", function(chunk) {
                         buffer += chunk.toString("utf8")
+                        parser.write(chunk.toString())
                     })
                     stream.once("end", function() {
                         const myheader = Imap.parseHeader(buffer)
                         console.log(prefix + "Parsed header: %s", inspect(myheader))
                         myMails.push(myheader)
                     })
+                    console.log(info)
                 })
                 msg.once("attributes", function(attrs) {
                     console.log(prefix + "Attributes: %s", inspect(attrs, false, 8))
                 })
                 msg.once("end", function() {
                     console.log(prefix + "Finished")
+                    parser.end()
                 })
+
             })
+
             f.once("error", function(newerr) {
                 console.log("Fetch error: " + newerr)
             })
