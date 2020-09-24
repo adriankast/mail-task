@@ -5,6 +5,7 @@
 </template>
 
 <script>
+// empty component with welcome message to be displayed at application startup
 export default {
     name: "Empty",
     props: {

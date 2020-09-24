@@ -13,6 +13,7 @@
 </template>
 
 <script>
+// editor to write new mails and function to post it to the backend
 import {config} from "../config.js"
 export default {
     name: "Editor",

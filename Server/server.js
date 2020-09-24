@@ -8,10 +8,16 @@ const MailParser = require("mailparser").MailParser
 const Imap = require("node-imap"),
     inspect = require("util").inspect
 
+/**
+ * currently using two accounts since smtp/imap don't work with other account
+ */
 const auth = credentials.imap
 const smtp = credentials.smtp
 
-
+/**
+ * Mail setup
+ */
+// map credential to required structure
 const imap = new Imap({
     user: auth.user,
     password: auth.pass,
@@ -24,8 +30,6 @@ function openInbox(cb) {
     imap.openBox("INBOX", true, cb)
 }
 
-
-
 imap.once("error", function(err) {
     console.error(err)
 })
@@ -34,11 +38,8 @@ imap.once("end", function() {
     console.log("Imap Connection ended")
 })
 
-
 const mail = new mailClient(smtp)
 
-
-// send or receive
 
 
 /**

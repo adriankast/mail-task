@@ -9,12 +9,11 @@
       <span class="mail--date">{{mail.date[0]}}</span>
     </div>
   </div>
-      <!--<ToDoCard v-bind:popup="showIt()" v-for="todo in todos" :key="todo._id" :title="todo.title" :body="todo.body" :id="todo._id" />-->
 </template>
 
 <script>
+// show recent mails to,from,subject,date as a list
 import {config} from "../config.js"
-
 export default {
     name: "MailList",
     props: {

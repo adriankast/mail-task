@@ -5,6 +5,7 @@
 </template>
 
 <script>
+// show the details for one mail
 export default {
     name: "MailDetails",
     props: {
