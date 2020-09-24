@@ -72,6 +72,9 @@ server.use((req, res, next) => {
     next()
 })
 
+/**
+ * fetch all existing mails
+ */
 server.get("/mails", function (req, res) {
     console.log("read mails: ")
     const myMails = []
@@ -122,6 +125,9 @@ server.get("/mails/:id", function (req, res) {
     // TODO: fetch one mail details
 })
 
+/**
+ * send a new mail
+ */
 server.post("/mails", function (req, res) {
     console.log("write mail: ", req.body)
     mail.send({ to: req.body.to, subject: req.body.subject, text: req.body.text, html: req.body.html }).then( info => {

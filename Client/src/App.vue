@@ -1,11 +1,21 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Haaaaalo" />
+    <span class="routerlink">      
+      <router-link :to="{name: 'home'}" >Home</router-link>
+      <br>
+      <router-link :to="{name: 'editor'}" >new Mail</router-link>
+    </span><br>
+    <MailList class="maillist" />
+
+    <div class="routerview">
+      <router-view></router-view>
+    </div>
+    
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue"
+import MailList from "./components/MailList.vue"
 
 
 export default {
@@ -16,7 +26,7 @@ export default {
       }
     },
     components: {
-      HelloWorld
+      MailList
     }
 }
 </script>
@@ -29,5 +39,21 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.maillist {
+  width: 30%;
+  height: 100%;
+}
+
+.routerlink {
+  left: 10%;
+  position: absolute;
+}
+
+.routerview {
+  width: 60%;
+  right: 0;
+  position: absolute;
 }
 </style>
