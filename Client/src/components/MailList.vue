@@ -27,9 +27,9 @@ export default {
         getMails() {
             fetch(config.backendUrl + "/mails").then( data => {
                 if (data.status === 200) {
-                    data.json().then( object => {
+                    data.json().then( mailarray => {
                         // this.todos = object
-                        this.mails = object
+                        this.mails = mailarray
                         console.log("Mails", this.mails)
                     }, err => {
                         console.error("Could not parse json " + err)
